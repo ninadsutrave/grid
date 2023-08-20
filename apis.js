@@ -13,9 +13,7 @@ router.get('/products', async (req, res) => {
   
       console.log(totalCount)
 
-      const records = await Product.find()
-        .skip((page - 1) * limit)
-        .limit(limit);
+      const records = await Product.find({ unique_id: { $gte: ((page-1)*limit + 1), $lte: (page*limit) } })
   
       res.json({
         records,
