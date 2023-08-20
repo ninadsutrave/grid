@@ -4,8 +4,10 @@ import Product from './product.js'
 
 router.get('/products', async (req, res) => {
 
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+  const page = parseInt(req.query.page) || 1;
+  const pageSize = parseInt(req.query.pageSize) || 10;
+
+  const skip = (page - 1) * pageSize;
   
     try {
       const totalCount = await Product.countDocuments();
@@ -13,7 +15,10 @@ router.get('/products', async (req, res) => {
   
       console.log(totalCount)
 
-      const records = await Product.find({ unique_id: { $gte: ((page-1)*limit + 1), $lte: (page*limit) } })
+      const records = await Product.find()
+                            .skip(skip)
+                            .limit(pageSize)
+                            .exec();
   
       res.json({
         records,
